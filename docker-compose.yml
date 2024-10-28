@@ -1,0 +1,30 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:5.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node_app
+    ports:
+      - "3000:3000"
+    environment:
+      MONGODB_URI: mongodb://root:password@mongo:27017/trip?authSource=admin
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+    command: npm start
+
+volumes:
+  mongo-data:

@@ -17,10 +17,6 @@ yarn-error.log*
 .env
 .env.*
 
-# Docker
-Dockerfile
-docker-compose.yml
-
 # Ignore any IDE-specific files (optional, based on your IDE)
 .vscode/
 .idea/
