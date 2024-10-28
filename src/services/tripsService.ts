@@ -6,7 +6,6 @@ import logger from '../utils/logger.js';
 
 dotenv.config();
 
-
 export const fetchTrips = async (origin: string, destination: string, sort_by: string): Promise<Trip[]> => {
   try {
 

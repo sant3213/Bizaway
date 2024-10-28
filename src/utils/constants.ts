@@ -6,6 +6,7 @@ export const FILTERS = {
 export const ERROR_MESSAGES = {
     MISSING_PARAMETER_SEARCH_TRIP: 'Missing required parameters: origin, destination, sort_by',
     INTERNAL_SERVER_ERROR: 'Internal server error',
+    MISSING_REQUIRED_FIELDS: 'Missing required fields to save trip'
 };
 
 export const API_URLS = {
