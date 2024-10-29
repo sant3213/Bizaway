@@ -9,8 +9,7 @@ export const swaggerConfig: Options = {
       version: '1.0.0',
       description: 'API documentation for Bizaway Test project',
       contact: {
-        name: 'Santiago',
-        email: 'cardenas3213@gmail.com',
+        name: 'Santiago'
       },
     },
     servers: [
