@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { fetchTrips, sortTrips } from '../services/tripsService.js';
+import { fetchTrips, listTripsService, sortTrips } from '../services/tripsService.js';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 import { AppError } from '../errors/AppError.js';
@@ -59,9 +59,17 @@ export const saveTrip = async (req: Request, res: Response, next: NextFunction):
 
 
 export const listTrips = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const page = parseInt(req.query.page as string, 10) || 1;
+  const limit = parseInt(req.query.limit as string, 10) || 10;
+
   try {
-    const trips = await TripModel.find().lean();
-    res.status(200).json({ message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS, data: trips });
+    const { trips, pagination } = await listTripsService(page, limit);
+
+    res.status(200).json({
+      message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS,
+      data: trips,
+      pagination,
+    });
   } catch (error) {
     handleError(error, res, next);
   }

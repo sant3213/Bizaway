@@ -3,6 +3,7 @@ import { FILTERS } from '../utils/constants.js';
 import { Trip } from '../types/trip.js';
 import { AppError } from '../errors/AppError.js';
 import logger from '../utils/logger.js';
+import { TripModel } from '../models/Trip.js';
 
 dotenv.config();
 
@@ -44,4 +45,24 @@ export const sortTrips = (trips: Trip[], sortBy: string): Trip[] => {
     default:
       return trips;
   }
+};
+
+export const listTripsService = async (page: number = 1, limit: number = 10) => {
+  const totalTrips = await TripModel.countDocuments();
+  const totalPages = Math.ceil(totalTrips / limit);
+
+  const currentPage = page > totalPages ? totalPages : page;
+  const skip = (currentPage - 1) * limit;
+
+  const trips = await TripModel.find().skip(skip).limit(limit).lean();
+
+  return {
+    trips,
+    pagination: {
+      totalTrips,
+      currentPage,
+      totalPages,
+      limit,
+    },
+  };
 };

@@ -5,8 +5,8 @@ import {
   saveTrip,
   searchTrips,
 } from "./tripsController";
-import { fetchTrips, sortTrips } from "../services/tripsService";
-import { ERROR_MESSAGES, FILTERS, SUCCESS_MESSAGES } from '../utils/constants';
+import { fetchTrips, listTripsService, sortTrips } from "../services/tripsService";
+import { ERROR_MESSAGES, FILTERS, SUCCESS_MESSAGES } from "../utils/constants";
 import logger from "../utils/logger";
 import { AppError } from "../errors/AppError";
 import { TripModel } from "../models/Trip";
@@ -16,6 +16,7 @@ import { searchValidatorSchema } from "../validators/tripValidator";
 jest.mock("../services/tripsService");
 jest.mock("../utils/logger");
 jest.mock("../models/Trip");
+
 const mockedTripModel = TripModel as jest.MockedClass<typeof TripModel>;
 
 describe("searchTrips Controller", () => {
@@ -122,13 +123,45 @@ describe("searchTrips Controller", () => {
     };
 
     const mockTrips = [
-      { origin: "SYD", destination: "GRU", cost: 625, duration: 5, type: "flight", id: "1", display_name: "Flight" },
-      { origin: "SYD", destination: "GRU", cost: 1709, duration: 32, type: "car", id: "2", display_name: "Car" },
+      {
+        origin: "SYD",
+        destination: "GRU",
+        cost: 625,
+        duration: 5,
+        type: "flight",
+        id: "1",
+        display_name: "Flight",
+      },
+      {
+        origin: "SYD",
+        destination: "GRU",
+        cost: 1709,
+        duration: 32,
+        type: "car",
+        id: "2",
+        display_name: "Car",
+      },
     ];
 
     const sortedByCheapest = [
-      { origin: "SYD", destination: "GRU", cost: 625, duration: 5, type: "flight", id: "1", display_name: "Flight" },
-      { origin: "SYD", destination: "GRU", cost: 1709, duration: 32, type: "car", id: "2", display_name: "Car" },
+      {
+        origin: "SYD",
+        destination: "GRU",
+        cost: 625,
+        duration: 5,
+        type: "flight",
+        id: "1",
+        display_name: "Flight",
+      },
+      {
+        origin: "SYD",
+        destination: "GRU",
+        cost: 1709,
+        duration: 32,
+        type: "car",
+        id: "2",
+        display_name: "Car",
+      },
     ];
 
     (fetchTrips as jest.Mock).mockResolvedValue(mockTrips);
@@ -152,14 +185,45 @@ describe("searchTrips Controller", () => {
     };
 
     const mockTrips = [
-      { origin: "SYD", destination: "GRU", cost: 1709, duration: 32, type: "car", id: "2", display_name: "Car" },
-      { origin: "SYD", destination: "GRU", cost: 625, duration: 5, type: "flight", id: "1", display_name: "Flight" },
+      {
+        origin: "SYD",
+        destination: "GRU",
+        cost: 1709,
+        duration: 32,
+        type: "car",
+        id: "2",
+        display_name: "Car",
+      },
+      {
+        origin: "SYD",
+        destination: "GRU",
+        cost: 625,
+        duration: 5,
+        type: "flight",
+        id: "1",
+        display_name: "Flight",
+      },
     ];
 
     const filteredTrips = [
-      { origin: "SYD", destination: "GRU", cost: 625, duration: 5, type: "flight", id: "1", display_name: "Flight" },
-      { origin: "SYD", destination: "GRU", cost: 1709, duration: 32, type: "car", id: "2", display_name: "Car" }
-     
+      {
+        origin: "SYD",
+        destination: "GRU",
+        cost: 625,
+        duration: 5,
+        type: "flight",
+        id: "1",
+        display_name: "Flight",
+      },
+      {
+        origin: "SYD",
+        destination: "GRU",
+        cost: 1709,
+        duration: 32,
+        type: "car",
+        id: "2",
+        display_name: "Car",
+      },
     ];
 
     (fetchTrips as jest.Mock).mockResolvedValue(mockTrips);
@@ -217,36 +281,76 @@ describe("saveTrip", () => {
   });
 });
 
-describe("listTrips", () => {
+describe("listTrips Controller", () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
   let next: NextFunction;
 
   beforeEach(() => {
-    req = {};
+    req = {
+      query: {
+        page: "1",
+        limit: "10",
+      },
+    };
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
-    } as Partial<Response>;
+    };
     next = jest.fn();
   });
 
-  it("should return a list of trips", async () => {
-    const trips = [
-      {
-        origin: "SYD",
-        destination: "GRU",
-        cost: 625,
-        duration: 5,
-        type: "flight",
-        id: "a749c866-7928-4d08-9d5c-a6821a583d1a",
-        display_name: "from SYD to GRU by flight",
-      },
-    ];
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-    jest.spyOn(TripModel, "find").mockReturnValueOnce({
-      lean: jest.fn().mockResolvedValue(trips),
-    } as any);
+  const trips = [
+    {
+      origin: "SYD",
+      destination: "GRU",
+      cost: 625,
+      duration: 5,
+      type: "flight",
+      id: "a749c866-7928-4d08-9d5c-a6821a583d1a",
+      display_name: "from SYD to GRU by flight",
+    },
+  ];
+
+  it('should return a successful response with trips and pagination data', async () => {
+    const mockPagination = { page: 1, limit: 10, total: 1 };
+    
+    (listTripsService as jest.Mock).mockResolvedValue({
+      trips: trips,
+      pagination: mockPagination,
+    });
+
+    await listTrips(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+
+    expect(res.json).toHaveBeenCalledWith({
+      message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS,
+      data: trips,
+      pagination: mockPagination,
+    });
+  });
+
+  it('should call next with an error on service failure', async () => {
+    const mockError = new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+    (listTripsService as jest.Mock).mockRejectedValue(mockError);
+
+    await listTrips(req as Request, res as Response, next);
+
+    expect(next).toHaveBeenCalledWith(mockError);
+  });
+
+  it('should return the single existing trip when page exceeds the dataset size', async () => {
+    const mockPagination = { page: 2, limit: 20, total: 1 };
+    
+    (listTripsService as jest.Mock).mockResolvedValue({
+      trips: trips,
+      pagination: mockPagination,
+    });
 
     await listTrips(req as Request, res as Response, next);
 
@@ -254,7 +358,30 @@ describe("listTrips", () => {
     expect(res.json).toHaveBeenCalledWith({
       message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS,
       data: trips,
+      pagination: mockPagination,
     });
+
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('should return an empty list when there are no trips available', async () => {
+    const mockPagination = { page: 1, limit: 10, total: 0 };
+    
+    (listTripsService as jest.Mock).mockResolvedValue({
+      trips: [],
+      pagination: mockPagination,
+    });
+
+    await listTrips(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+
+    expect(res.json).toHaveBeenCalledWith({
+      message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS,
+      data: [],
+      pagination: mockPagination,
+    });
+
     expect(next).not.toHaveBeenCalled();
   });
 });
@@ -290,7 +417,9 @@ describe("deleteTrip", () => {
     await deleteTrip(req as Request, res as Response, next);
 
     expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ message: ERROR_MESSAGES.TRIP_NOT_FOUND });
+    expect(res.json).toHaveBeenCalledWith({
+      message: ERROR_MESSAGES.TRIP_NOT_FOUND,
+    });
   });
 
   it("should call next with error on delete failure", async () => {

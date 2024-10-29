@@ -1,56 +1,99 @@
+import { ERROR_MESSAGES } from "../utils/constants.js";
+
 export const listTripsDocs = {
   "/trips": {
-    get: {
-      summary: "Retrieve all saved trips",
-      description: "Fetches a list of all trips stored in the database.",
-      responses: {
-        200: {
-          description: "A list of saved trips",
-          content: {
-            "application/json": {
-              schema: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/Trip",
-                },
-                example: [
-                  {
-                    origin: "SYD",
-                    destination: "GRU",
-                    cost: 625,
-                    duration: 5,
-                    type: "flight",
-                    id: "a749c866-7928-4d08-9d5c-a6821a583d1a",
-                    display_name: "from SYD to GRU by flight",
-                  },
-                  {
-                    origin: "SYD",
-                    destination: "GRU",
-                    cost: 1709,
-                    duration: 32,
-                    type: "car",
-                    id: "d1b89056-ae55-4040-bbd6-0373405705d4",
-                    display_name: "from SYD to GRU by car",
-                  },
-                  {
-                    origin: "SYD",
-                    destination: "GRU",
-                    cost: 4236,
-                    duration: 5,
-                    type: "train",
-                    id: "d6bbe5e5-be4d-40d5-9125-cedb57508897",
-                    display_name: "from SYD to GRU by train",
-                  },
-                ],
-              },
+      "get": {
+        "summary": "Retrieve all saved trips",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
             },
+            "required": false,
+            "description": "Page number for pagination"
           },
-        },
-        500: {
-          description: "Internal server error",
-        },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            },
+            "required": false,
+            "description": "Number of trips per page"
+          }
+        ],
+        "description": "Fetches a list of all trips stored in the database.",
+        "responses": {
+          "200": {
+            "description": "A list of saved trips",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Trip" },
+                      "example": [
+                        {
+                          "origin": "SYD",
+                          "destination": "GRU",
+                          "cost": 625,
+                          "duration": 5,
+                          "type": "flight",
+                          "id": "a749c866-7928-4d08-9d5c-a6821a583d1a",
+                          "display_name": "from SYD to GRU by flight"
+                        },
+                        {
+                          "origin": "SYD",
+                          "destination": "GRU",
+                          "cost": 1709,
+                          "duration": 32,
+                          "type": "car",
+                          "id": "d1b89056-ae55-4040-bbd6-0373405705d4",
+                          "display_name": "from SYD to GRU by car"
+                        },
+                        {
+                          "origin": "SYD",
+                          "destination": "GRU",
+                          "cost": 4236,
+                          "duration": 5,
+                          "type": "train",
+                          "id": "d6bbe5e5-be4d-40d5-9125-cedb57508897",
+                          "display_name": "from SYD to GRU by train"
+                        }
+                      ]
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "totalTrips": { "type": "integer" },
+                        "currentPage": { "type": "integer" },
+                        "totalPages": { "type": "integer" },
+                        "limit": { "type": "integer" }
+                      },
+                      "example": {
+                        "totalTrips": 50,
+                        "currentPage": 1,
+                        "totalPages": 5,
+                        "limit": 10
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": ERROR_MESSAGES.INTERNAL_SERVER_ERROR
+          }
+        }
       },
-    },
     post: {
       summary: "Save a trip",
       requestBody: {
