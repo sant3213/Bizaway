@@ -4,8 +4,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 import { AppError } from '../errors/AppError.js';
 import { TripModel } from '../models/Trip.js';
-import { validateSearchParams } from '../validators/queryValidators.js';
-import { validateBodyParams } from '../validators/bodyValidators.js';
+import { validateBodyParams, validateSearchParams } from '../validators/validators.js';
 
 const handleError = (error: any, res: Response, next: NextFunction) => {
   logger.error('Controller error:', error);

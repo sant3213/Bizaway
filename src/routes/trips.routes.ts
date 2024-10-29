@@ -1,7 +1,7 @@
 import express from 'express';
 import { deleteTrip, listTrips, saveTrip } from '../controllers/tripsController.js';
 import { validateBody } from '../middleware/validate.js';
-import { saveValidatorSchema } from '../validators/tripValidator.js';
+import { saveValidatorSchema } from '../validators/schemas.js';
 
 const tripRoutes = express.Router();
 

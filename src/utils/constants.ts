@@ -12,7 +12,7 @@ export const ERROR_MESSAGES = {
     MISSING_BODY_PARAMETER: (param: string) => `Missing required body parameter: ${param}`,
     MISSING_QUERY_PARAMETER: (param: string) => `Missing required query parameter: ${param}`,
     TRIP_NOT_FOUND: 'Trip not found',
-    SAME_ORIGIN_DESTINATION: 'Origin and destination cannot be the same'
+    SAME_ORIGIN_DESTINATION: 'Origin and destination cannot be the same',
 };
 
 export const SUCCESS_MESSAGES = {
@@ -24,7 +24,7 @@ export const SUCCESS_MESSAGES = {
 };
 
 export const API_URLS = {
-    TRIPS: 'https://z0qw1e7jpd.execute-api.eu-west-1.amazonaws.com/default/trips'
+    TRIPS: process.env.TRTRIPS_API_URL
 };
 
 export const HEADERS = {
