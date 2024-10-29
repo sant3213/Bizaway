@@ -28,8 +28,8 @@ export const getTripDocs = {
                         type: 'string',
                         enum: ['fastest', 'cheapest'],
                     },
-                    required: true,
-                    description: "Sort trips by 'fastest' or 'cheapest'",
+                    required: false,
+                    description: "Optional sorting: 'fastest' or 'cheapest'",
                 },
             ],
             responses: {
@@ -47,12 +47,12 @@ export const getTripDocs = {
                     },
                 },
                 400: {
-                    description: 'Missing required parameters',
+                    description: 'Invalid parameters (e.g., invalid IATA codes)',
                 },
                 500: {
                     description: 'Internal server error',
                 },
-            },
+            }
         },
     },
 };

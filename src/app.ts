@@ -1,12 +1,10 @@
 import express from 'express';
-import { deleteTrip, listTrips, saveTrip, searchTrips } from './controllers/tripsController.js';
 import { errorHandler } from './middleware/errorHandler.js';
-import { saveValidatorSchema, searchValidatorSchema } from './validators/tripValidator.js';
-import { validateBody, validateQuery } from './middleware/validate.js';
 import { connectToDatabase } from './config/database.js';
 import { setupSwagger } from './utils/swaggerSetup.js';
 import { config } from './config/config.js';
 import tripRoutes from './routes/trips.routes.js';
+import searchTripRoutes from './routes/searchTrips.routes.js';
 
 const app = express();
 
@@ -16,6 +14,7 @@ connectToDatabase();
 
 setupSwagger(app);
 
+app.use('/search-trips', searchTripRoutes);
 app.use('/trips', tripRoutes)
 
 app.use(errorHandler);

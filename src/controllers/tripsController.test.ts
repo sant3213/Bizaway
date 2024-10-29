@@ -6,7 +6,7 @@ import {
   searchTrips,
 } from "./tripsController";
 import { fetchTrips, sortTrips } from "../services/tripsService";
-import { ERROR_MESSAGES, FILTERS } from "../utils/constants";
+import { ERROR_MESSAGES, FILTERS, SUCCESS_MESSAGES } from '../utils/constants';
 import logger from "../utils/logger";
 import { AppError } from "../errors/AppError";
 import { TripModel } from "../models/Trip";
@@ -170,7 +170,7 @@ describe("searchTrips Controller", () => {
     expect(fetchTrips).toHaveBeenCalledWith("SYD", "GRU", FILTERS.FASTEST);
     expect(sortTrips).toHaveBeenCalledWith(mockTrips, FILTERS.FASTEST);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Trips fetched successfully",
+      message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS,
       data: filteredTrips,
     });
   });
@@ -211,7 +211,7 @@ describe("saveTrip", () => {
     expect(mockedTripModel.prototype.save).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Trip saved successfully",
+      message: SUCCESS_MESSAGES.TRIPS.SAVE_SUCCESS,
       data: expect.any(Object),
     });
   });
@@ -252,7 +252,7 @@ describe("listTrips", () => {
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Trips fetched successfully",
+      message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS,
       data: trips,
     });
     expect(next).not.toHaveBeenCalled();
@@ -280,7 +280,7 @@ describe("deleteTrip", () => {
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Trip deleted successfully",
+      message: ERROR_MESSAGES.TRIP_DELETED_SUCCESS,
     });
   });
 
@@ -290,11 +290,11 @@ describe("deleteTrip", () => {
     await deleteTrip(req as Request, res as Response, next);
 
     expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ message: "Trip not found" });
+    expect(res.json).toHaveBeenCalledWith({ message: ERROR_MESSAGES.TRIP_NOT_FOUND });
   });
 
   it("should call next with error on delete failure", async () => {
-    const error = new Error("Internal server error");
+    const error = new Error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     jest.spyOn(TripModel, "findByIdAndDelete").mockRejectedValueOnce(error);
 
     await deleteTrip(req as Request, res as Response, next);

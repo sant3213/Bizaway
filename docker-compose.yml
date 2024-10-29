@@ -23,7 +23,7 @@ services:
     depends_on:
       - mongo
     volumes:
-      - .:/app
+      - .src:/app/src
     command: npm start
 
 volumes:

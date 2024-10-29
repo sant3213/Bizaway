@@ -1,3 +1,5 @@
+import { ERROR_MESSAGES } from "../utils/constants.js";
+
 export const deleteTripDocs = {
     '/trips/{id}': {
       delete: {
@@ -15,13 +17,13 @@ export const deleteTripDocs = {
         ],
         responses: {
           200: {
-            description: 'Trip deleted successfully',
+            description: ERROR_MESSAGES.TRIP_DELETED_SUCCESS,
           },
           404: {
-            description: 'Trip not found',
+            description: ERROR_MESSAGES.TRIP_NOT_FOUND,
           },
           500: {
-            description: 'Internal server error',
+            description: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
           },
         },
       },

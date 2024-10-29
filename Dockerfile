@@ -1,17 +1,17 @@
 FROM node:18-alpine
 
+RUN mkdir -p /app
 WORKDIR /app
 
-COPY package*.json ./
 
+COPY package*.json ./
 RUN npm install
 
-RUN npm install -g typescript ts-node
-
 COPY . .
+RUN npx tsc
 
-RUN npm run build
+WORKDIR /app/dist
 
 EXPOSE 3000
 
-CMD ["node", "--loader", "ts-node/esm", "-r", "tsconfig-paths/register", "./src/app.ts"]
+CMD ["node", "app.js"]

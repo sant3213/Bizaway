@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { fetchTrips, sortTrips } from '../services/tripsService.js';
-import { ERROR_MESSAGES } from '../utils/constants.js';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 import { AppError } from '../errors/AppError.js';
 import { TripModel } from '../models/Trip.js';
@@ -37,7 +37,7 @@ export const searchTrips = async (req: Request, res: Response, next: NextFunctio
     );
     const sortedTrips = sortTrips(filteredTrips, sort_by as string);
 
-    res.status(200).json({ message: 'Trips fetched successfully', data: sortedTrips });
+    res.status(200).json({ message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS, data: sortedTrips });
   } catch (error) {
     handleError(error, res, next);
   }
@@ -51,7 +51,7 @@ export const saveTrip = async (req: Request, res: Response, next: NextFunction):
     const trip = new TripModel({ origin, destination, cost, duration, type, id, display_name });
     await trip.save();
 
-    res.status(201).json({ message: 'Trip saved successfully', data: trip });
+    res.status(201).json({ message: SUCCESS_MESSAGES.TRIPS.SAVE_SUCCESS, data: trip });
   } catch (error) {
     handleError(error, res, next);
   }
@@ -61,7 +61,7 @@ export const saveTrip = async (req: Request, res: Response, next: NextFunction):
 export const listTrips = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const trips = await TripModel.find().lean();
-    res.status(200).json({ message: 'Trips fetched successfully', data: trips });
+    res.status(200).json({ message: SUCCESS_MESSAGES.TRIPS.FETCH_SUCCESS, data: trips });
   } catch (error) {
     handleError(error, res, next);
   }
@@ -74,11 +74,11 @@ export const deleteTrip = async (req: Request, res: Response, next: NextFunction
     const deletedTrip = await TripModel.findByIdAndDelete(id);
     
     if (!deletedTrip) {
-      res.status(404).json({ message: 'Trip not found' });
+      res.status(404).json({ message:  ERROR_MESSAGES.TRIP_NOT_FOUND });
       return;
     }
 
-    res.status(200).json({ message: 'Trip deleted successfully' });
+    res.status(200).json({ message: ERROR_MESSAGES.TRIP_DELETED_SUCCESS});
   } catch (error) {
     handleError(error, res, next);
   }

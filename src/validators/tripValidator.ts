@@ -4,7 +4,7 @@ import { FILTERS } from '../utils/constants.js';
 export const searchValidatorSchema = Joi.object({
   origin: Joi.string().required(),
   destination: Joi.string().required(),
-  sort_by: Joi.string().valid(FILTERS.FASTEST, FILTERS.CHEAPEST).required(),
+  sort_by: Joi.string().valid(FILTERS.FASTEST, FILTERS.CHEAPEST).optional(),
 });
 
 export const saveValidatorSchema = Joi.object({
