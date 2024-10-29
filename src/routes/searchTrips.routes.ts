@@ -1,4 +1,3 @@
-// routes/searchTrips.routes.js
 import express from 'express';
 import { searchTrips } from '../controllers/tripsController.js';
 import { validateQuery } from '../middleware/validate.js';
