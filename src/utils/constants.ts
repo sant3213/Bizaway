@@ -12,6 +12,7 @@ export const ERROR_MESSAGES = {
     MISSING_BODY_PARAMETER: (param: string) => `Missing required body parameter: ${param}`,
     MISSING_QUERY_PARAMETER: (param: string) => `Missing required query parameter: ${param}`,
     TRIP_NOT_FOUND: 'Trip not found',
+    SAME_ORIGIN_DESTINATION: 'Origin and destination cannot be the same'
 };
 
 export const SUCCESS_MESSAGES = {

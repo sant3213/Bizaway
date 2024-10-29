@@ -19,6 +19,10 @@ export const validateSearchParams = (params: any) => {
     throw new AppError(ERROR_MESSAGES.INVALID_DESTINATION_CODE, 400);
   }
 
+  if (params.origin === params.destination) {
+    throw new AppError(ERROR_MESSAGES.SAME_ORIGIN_DESTINATION, 400);
+  }
+
   if (params.sort_by && ![FILTERS.FASTEST, FILTERS.CHEAPEST].includes(params.sort_by)) {
     throw new AppError(ERROR_MESSAGES.INVALID_SORT_BY, 400);
   }

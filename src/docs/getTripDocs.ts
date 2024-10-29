@@ -1,3 +1,5 @@
+import { VALID_AIRPORT_CODES } from "../utils/airportCodes.js";
+
 export const getTripDocs = {
     '/search-trips': {
         get: {
@@ -8,6 +10,7 @@ export const getTripDocs = {
                     name: 'origin',
                     schema: {
                         type: 'string',
+                        enum: VALID_AIRPORT_CODES
                     },
                     required: true,
                     description: 'Origin city',
@@ -17,6 +20,7 @@ export const getTripDocs = {
                     name: 'destination',
                     schema: {
                         type: 'string',
+                        enum: VALID_AIRPORT_CODES
                     },
                     required: true,
                     description: 'Destination city',
