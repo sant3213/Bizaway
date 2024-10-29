@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/app.js",
     "build": "tsc",
-    "test": "jest --config src/config/jest.config.ts"
+    "test": "jest --config src/config/jest.config.ts --coverage"
   },
   "type": "module",
   "keywords": [],

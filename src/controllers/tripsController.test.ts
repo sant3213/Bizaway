@@ -10,8 +10,7 @@ import { ERROR_MESSAGES, FILTERS, SUCCESS_MESSAGES } from "../utils/constants";
 import logger from "../utils/logger";
 import { AppError } from "../errors/AppError";
 import { TripModel } from "../models/Trip";
-import { validateQuery } from "../middleware/validate";
-import { searchValidatorSchema } from "../validators/tripValidator";
+import { VALID_AIRPORT_CODES } from "../utils/airportCodes";
 
 jest.mock("../services/tripsService");
 jest.mock("../utils/logger");
@@ -238,6 +237,66 @@ describe("searchTrips Controller", () => {
       data: filteredTrips,
     });
   });
+
+  it('should return a 400 error if "origin" is missing', async () => {
+    req.query = { destination: VALID_AIRPORT_CODES[1], sort_by: FILTERS.CHEAPEST };
+
+    await searchTrips(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: ERROR_MESSAGES.MISSING_QUERY_PARAMETER('origin') });
+  });
+
+  it('should return a 400 error if "destination" is missing', async () => {
+    req.query = { origin: VALID_AIRPORT_CODES[0], sort_by: FILTERS.CHEAPEST };
+
+    await searchTrips(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: ERROR_MESSAGES.MISSING_QUERY_PARAMETER('destination') });
+  });
+
+  it('should return a 400 error if "origin" is invalid', async () => {
+    req.query = { origin: 'INVALID', destination: VALID_AIRPORT_CODES[1], sort_by: FILTERS.CHEAPEST };
+
+    await searchTrips(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: ERROR_MESSAGES.INVALID_ORIGIN_CODE });
+  });
+
+  it('should return a 400 error if "destination" is invalid', async () => {
+    req.query = { origin: VALID_AIRPORT_CODES[0], destination: 'INVALID', sort_by: FILTERS.CHEAPEST };
+
+    await searchTrips(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: ERROR_MESSAGES.INVALID_DESTINATION_CODE });
+  });
+
+  it('should return a 400 error if "sort_by" is invalid', async () => {
+    req.query = { origin: VALID_AIRPORT_CODES[0], destination: VALID_AIRPORT_CODES[1], sort_by: 'INVALID_SORT' };
+
+    await searchTrips(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: ERROR_MESSAGES.INVALID_SORT_BY });
+  });
+
+  it('should proceed with valid parameters', async () => {
+    req.query = { origin: VALID_AIRPORT_CODES[0], destination: VALID_AIRPORT_CODES[1], sort_by: FILTERS.CHEAPEST };
+    const mockTrips = [
+      { origin: VALID_AIRPORT_CODES[0], destination: VALID_AIRPORT_CODES[1], cost: 625, duration: 5, type: 'flight', id: '1' },
+    ];
+
+    (fetchTrips as jest.Mock).mockResolvedValue(mockTrips);
+    (sortTrips as jest.Mock).mockReturnValue(mockTrips);
+
+    await searchTrips(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ message: "Trips fetched successfully", data: mockTrips });
+  });
 });
 
 describe("saveTrip", () => {
@@ -407,7 +466,7 @@ describe("deleteTrip", () => {
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      message: ERROR_MESSAGES.TRIP_DELETED_SUCCESS,
+      message: SUCCESS_MESSAGES.TRIPS.DELETE_SUCCESS,
     });
   });
 
@@ -431,41 +490,5 @@ describe("deleteTrip", () => {
     expect(next).toHaveBeenCalledWith(
       new AppError(ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 500)
     );
-  });
-});
-
-describe("validateQuery Middleware", () => {
-  let req: Partial<Request>;
-  let res: Partial<Response>;
-  let next: NextFunction;
-
-  beforeEach(() => {
-    req = { query: {} };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-    next = jest.fn();
-  });
-
-  it("should return 400 if required query parameters are missing", () => {
-    validateQuery(searchValidatorSchema)(req as Request, res as Response, next);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        error: expect.stringContaining('"origin" is required'),
-      })
-    );
-    expect(next).not.toHaveBeenCalled();
-  });
-
-  it("should call next if validation is successful", () => {
-    req.query = { origin: "NYC", destination: "LAX", sort_by: "fastest" };
-
-    validateQuery(searchValidatorSchema)(req as Request, res as Response, next);
-
-    expect(next).toHaveBeenCalled();
-    expect(res.status).not.toHaveBeenCalled();
   });
 });

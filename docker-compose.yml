@@ -23,8 +23,21 @@ services:
     depends_on:
       - mongo
     volumes:
-      - .src:/app/src
+      - ./src:/app/src
     command: npm start
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: test_app
+    environment:
+      MONGODB_URI: mongodb://root:password@mongo:27017/trip?authSource=admin
+    depends_on:
+      - mongo
+    volumes:
+      - ./src:/app/src
+    command: npm test
 
 volumes:
   mongo-data:

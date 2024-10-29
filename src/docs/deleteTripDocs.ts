@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from "../utils/constants.js";
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../utils/constants.js";
 
 export const deleteTripDocs = {
     '/trips/{id}': {
@@ -17,7 +17,7 @@ export const deleteTripDocs = {
         ],
         responses: {
           200: {
-            description: ERROR_MESSAGES.TRIP_DELETED_SUCCESS,
+            description: SUCCESS_MESSAGES.TRIPS.DELETE_SUCCESS,
           },
           404: {
             description: ERROR_MESSAGES.TRIP_NOT_FOUND,

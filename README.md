@@ -61,7 +61,7 @@ This will start the application, and it will be accessible at [http://localhost:
 To run tests, make sure the application is up and then execute:
 
 ```bash
-docker exec -it <container_name> npm test
+docker-compose up --build test 
 ```
 Or you can run:
 ```bash

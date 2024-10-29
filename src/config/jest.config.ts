@@ -5,4 +5,6 @@ export default {
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   rootDir: '../../',
   moduleNameMapper: {'^(../(models|services|utils|controllers|errors|types|validators|middleware)/.*)\\.js$': '$1.ts'},
+  modulePathIgnorePatterns: ['<rootDir>/dist/'],
+  coverageReporters: ['text', 'html'],
 };

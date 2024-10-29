@@ -7,8 +7,7 @@ export const validateSearchParams = (params: any) => {
 
   for (const field of requiredFields) {
     if (!params[field]) {
-      const errorMessage = `Missing required query parameter: ${field}`;
-      throw new AppError(errorMessage, 400);
+      throw new AppError(ERROR_MESSAGES.MISSING_QUERY_PARAMETER(field), 400);
     }
   }
 

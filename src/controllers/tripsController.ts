@@ -86,7 +86,7 @@ export const deleteTrip = async (req: Request, res: Response, next: NextFunction
       return;
     }
 
-    res.status(200).json({ message: ERROR_MESSAGES.TRIP_DELETED_SUCCESS});
+    res.status(200).json({ message: SUCCESS_MESSAGES.TRIPS.DELETE_SUCCESS});
   } catch (error) {
     handleError(error, res, next);
   }
