@@ -9,7 +9,11 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "./",
+    "paths": {
+      "*": ["*", "*.ts", "*.js"]
+  }
   },
   "include": ["src/**/*.ts", "src/config/jest.config.js"],
   "exclude": ["node_modules"]

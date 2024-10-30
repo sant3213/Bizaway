@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
-import { FILTERS } from '../utils/constants.js';
+import { ERROR_MESSAGES, FILTERS } from '../utils/constants.js';
 import { Trip } from '../types/trip.js';
-import { AppError } from '../errors/AppError.js';
 import logger from '../utils/logger.js';
 import { TripModel } from '../models/Trip.js';
 import { ExternalApiError } from '../errors/ExternalApiError.js';
@@ -26,13 +25,13 @@ export const fetchTrips = async (origin: string, destination: string, sort_by: s
 
     if (!response.ok) {
       logger.error(`Failed to fetch trips: ${response.statusText}`);
-      throw new ExternalApiError(`External API error: ${response.statusText}`, response.status);
+      throw new ExternalApiError(ERROR_MESSAGES.EXTERNAL_API_ERROR(response.statusText), response.status);
       }
 
       const data = (await response.json() as Trip[]);
       return data;
   } catch (error) {
-    throw new ExternalApiError('Internal server error while fetching trips', 500);
+    throw new ExternalApiError(ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 500);
   }
 };
 

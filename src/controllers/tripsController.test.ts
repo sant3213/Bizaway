@@ -477,7 +477,7 @@ describe("deleteTrip", () => {
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
-      message: ERROR_MESSAGES.TRIP_NOT_FOUND,
+      error: ERROR_MESSAGES.TRIP_NOT_FOUND,
     });
   });
 

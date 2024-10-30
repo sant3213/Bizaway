@@ -4,7 +4,7 @@ export default {
   testMatch: ['**/__tests__/**/*.test.ts', '**/?(*.)+(spec|test).[tj]s?(x)'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   rootDir: '../../',
-  moduleNameMapper: {'^(../(models|services|utils|controllers|errors|types|validators|middleware)/.*)\\.js$': '$1.ts'},
+  moduleNameMapper: { '^(\\.{1,2}/.*)\\.js$': '$1'},
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
   coverageReporters: ['text', 'html'],
 };

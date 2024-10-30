@@ -5,6 +5,7 @@ import logger from '../utils/logger.js';
 import { AppError } from '../errors/AppError.js';
 import { TripModel } from '../models/Trip.js';
 import { validateBodyParams, validateSearchParams } from '../validators/validators.js';
+import { NotFoundError } from '../errors/index.js';
 
 const handleError = (error: any, res: Response, next: NextFunction) => {
   logger.error('Controller error:', error);
@@ -81,8 +82,7 @@ export const deleteTrip = async (req: Request, res: Response, next: NextFunction
     const deletedTrip = await TripModel.findByIdAndDelete(id);
     
     if (!deletedTrip) {
-      res.status(404).json({ message:  ERROR_MESSAGES.TRIP_NOT_FOUND });
-      return;
+      throw new NotFoundError(ERROR_MESSAGES.TRIP_NOT_FOUND);
     }
 
     res.status(200).json({ message: SUCCESS_MESSAGES.TRIPS.DELETE_SUCCESS});
