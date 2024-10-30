@@ -3,8 +3,8 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { connectToDatabase } from './config/database.js';
 import { setupSwagger } from './utils/swaggerSetup.js';
 import { config } from './config/config.js';
-import tripRoutes from './routes/trips.routes.js';
-import searchTripRoutes from './routes/searchTrips.routes.js';
+import routes from './routes/index.js';
+
 
 const app = express();
 
@@ -14,8 +14,7 @@ connectToDatabase();
 
 setupSwagger(app);
 
-app.use('/search-trips', searchTripRoutes);
-app.use('/trips', tripRoutes)
+app.use('/api/v1', routes);
 
 app.use(errorHandler);
 

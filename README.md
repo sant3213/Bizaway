@@ -9,7 +9,9 @@ This project is an API to manage and query trip information. It is built with No
   - [Prerequisites](#prerequisites)
   - [Environment Variables](#environment-variables)
   - [Installation](#installation)
+      - [**Running the Application**](#running-the-application)
   - [Accessing the Application](#accessing-the-application)
+      - [**Running in Production Mode**](#running-in-production-mode)
   - [Testing](#testing)
   - [API Documentation](#api-documentation)
   - [Usage](#usage)
@@ -26,32 +28,32 @@ This project is an API to manage and query trip information. It is built with No
 
 ## Environment Variables
 
-Create a `.env` file in the root of the project with the following variables:
+- Create a `.env` file in the root of the project with the following variables:
 
-```env
-API_KEY=<YourAPIKEY>
-TRIPS_API_URL=<APIToQueryTrips>
-MONGODB_URI=mongodb://root:password@mongo:27017/trip?authSource=admin
-PORT=3000
-```
+  ```env
+  API_KEY=<YourAPIKEY>
+  TRIPS_API_URL=<APIToQueryTrips>
+  MONGODB_URI=mongodb://root:password@mongo:27017/trip?authSource=admin
+  PORT=3000
+  ```
 
 ## Installation
-Clone the repository from [https://github.com/sant3213/Bizaway.git](https://github.com/sant3213/Bizaway.git)
-```bash
-git clone https://github.com/sant3213/Bizaway.git
-cd Bizaway
-```
+- Clone the repository from [https://github.com/sant3213/Bizaway.git](https://github.com/sant3213/Bizaway.git)
+  ```bash
+  git clone https://github.com/sant3213/Bizaway.git
+  cd Bizaway
+  ```
 
 Make sure Docker is running.
 
 Add the .env file as described above.
 
-Running the Application
-To build and start the application with Docker, run the following command in the root directory of the project:
+#### **Running the Application**
+- To build and start the application with Docker, run the following make command in the root directory of the project:
 
-```bash
-docker-compose up --build
-```
+  ```bash
+  make up-dev
+  ```
 
 This will start the application, and it will be accessible at [http://localhost:3000](http://localhost:3000).
 
@@ -59,18 +61,32 @@ This will start the application, and it will be accessible at [http://localhost:
 - API: Use Postman or any HTTP client to send requests to [http://localhost:3000](http://localhost:3000).
 - Swagger Documentation: Open [http://localhost:3000/api-docs](http://localhost:3000/api-docs) in your browser to view the Swagger API documentation.
 
-## Testing
-To run tests, make sure the application is up and then execute:
+#### **Running in Production Mode**
+- To run the application in production mode, use:
+  ```bash
+  make up-prod
+  ```
 
-```bash
-docker-compose up --build test up test 
-```
-Or you can run:
-```bash
-npm install
-npm test
-```
-This will execute all unit and integration tests for the application.
+## Testing
+- To run tests with Docker, use:
+
+    ```bash
+    npm test
+    ```
+
+Alternatively, you can run tests locally without Docker:
+
+1. Install dependencies if not already installed:
+      
+    ```bash
+    npm install
+    npm test
+    ```
+2. Run tests: 
+    ```bash
+    npm test
+    ```
+    This will execute all unit tests for the application.
 
 After running tests, a coverage folder is generated in the project directory. To view test coverage details, open the HTML report in a browser by navigating to coverage/index.html. This report provides an overview of the coverage for each test.
 

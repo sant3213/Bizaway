@@ -10,6 +10,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
+    profiles: ["dev", "prod"]
 
   app:
     build:
@@ -25,19 +26,7 @@ services:
     volumes:
       - ./src:/app/src
     command: npm start
-
-  test:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: test_app
-    environment:
-      MONGODB_URI: mongodb://root:password@mongo:27017/trip?authSource=admin
-    depends_on:
-      - mongo
-    volumes:
-      - ./src:/app/src
-    command: npm test
+    profiles: ["dev", "prod"]
 
 volumes:
   mongo-data:
