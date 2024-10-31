@@ -71,7 +71,7 @@ This will start the application, and it will be accessible at [http://localhost:
 - To run tests with Docker, use:
 
     ```bash
-    npm test
+    make test
     ```
 
 Alternatively, you can run tests locally without Docker:

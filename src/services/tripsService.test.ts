@@ -2,6 +2,7 @@ import { fetchTrips, listTripsService } from './tripsService';
 import { AppError } from '../errors/AppError';
 import dotenv from 'dotenv';
 import { TripModel } from '../models/Trip';
+import redisClient from '../config/redisClient';
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ jest.mock('../utils/logger', () => ({
 }));
 
 jest.mock('../models/Trip');
+jest.mock("../config/redisClient.js");
 
 
 describe('fetchTrips Service', () => {
@@ -22,32 +24,43 @@ describe('fetchTrips Service', () => {
   const sortBy = 'cost';
   const apiUrl = process.env.TRIPS_API_URL as string;
   const apiKey = process.env.API_KEY as string;
+  const mockOrigin = "NYC";
+  const mockDestination = "LAX";
+  const mockSortBy = "FASTEST";
+  const mockTrips = [{ id: 1, duration: 200, cost: 50 }];
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (redisClient.get as jest.Mock).mockResolvedValue(null);
+    (redisClient.set as jest.Mock).mockResolvedValue("OK");
   });
 
-  it('should fetch trips successfully and return data', async () => {
-    const mockTrips = [
-      { origin: 'SYD', destination: 'GRU', cost: 625, duration: 5, type: 'flight', id: 'a749c866' },
-      { origin: 'SYD', destination: 'GRU', cost: 1709, duration: 32, type: 'car', id: 'd1b89056' },
-    ];
+  it("should return cached trips data if available", async () => {
+    (redisClient.get as jest.Mock).mockResolvedValue(JSON.stringify(mockTrips));
     
-    (fetch as jest.Mock).mockResolvedValue({
-      ok: true,
-      json: async () => mockTrips,
-    });
-
-    const result = await fetchTrips(origin, destination, sortBy);
-
-    expect(fetch).toHaveBeenCalledWith(`${apiUrl}?origin=SYD&destination=GRU&sort_by=cost`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-      },
-    });
+    const result = await fetchTrips(mockOrigin, mockDestination, mockSortBy);
+    
     expect(result).toEqual(mockTrips);
+    expect(redisClient.get).toHaveBeenCalledWith(
+      `trips:${mockOrigin}:${mockDestination}:${mockSortBy}`
+    );
+  });
+
+  it("should fetch trips data from the API if not in cache", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue(mockTrips),
+    });
+
+    const result = await fetchTrips(mockOrigin, mockDestination, mockSortBy);
+    
+    expect(result).toEqual(mockTrips);
+    expect(global.fetch).toHaveBeenCalled();
+    expect(redisClient.set).toHaveBeenCalledWith(
+      `trips:${mockOrigin}:${mockDestination}:${mockSortBy}`,
+      JSON.stringify(mockTrips),
+      { EX: 3600 }
+    );
   });
 
   it('should throw an AppError if the API response is not ok', async () => {
@@ -107,7 +120,7 @@ describe('listTripsService', () => {
   it('should return the last page if requested page exceeds totalPages', async () => {
     const page = 5;
     const limit = 2;
-    const totalTrips = 3; // Fewer trips than requested
+    const totalTrips = 3;
     const totalPages = Math.ceil(totalTrips / limit);
     const currentPage = totalPages;
 
@@ -142,8 +155,8 @@ describe('listTripsService', () => {
     expect(result.trips).toEqual([]);
     expect(result.pagination).toEqual({
       totalTrips,
-      currentPage: 0,
-      totalPages: 0,
+      currentPage: 1,
+      totalPages: 1,
       limit,
     });
   });

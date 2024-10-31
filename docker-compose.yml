@@ -12,6 +12,15 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     profiles: ["dev", "prod"]
 
+  redis:
+    image: redis:7.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    profiles: ["dev", "prod"]
+
   app:
     build:
       context: .
@@ -23,6 +32,7 @@ services:
       MONGODB_URI: mongodb://root:password@mongo:27017/trip?authSource=admin
     depends_on:
       - mongo
+      - redis
     volumes:
       - ./src:/app/src
     command: npm start
@@ -30,3 +40,4 @@ services:
 
 volumes:
   mongo-data:
+  redis-data:
