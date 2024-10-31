@@ -14,6 +14,8 @@ export const ERROR_MESSAGES = {
     EXTERNAL_API_ERROR: (param: string) => `External API error: ${param}`,
     TRIP_NOT_FOUND: 'Trip not found',
     SAME_ORIGIN_DESTINATION: 'Origin and destination cannot be the same',
+    INVALID_PAGE: "Invalid value for page. Must be a positive integer.",
+    INVALID_LIMIT: "Invalid value for limit. Must be a positive integer.",
 };
 
 export const SUCCESS_MESSAGES = {

@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { SUCCESS_MESSAGES } from "../../utils/constants.js";
 import { handleError } from "../../errors/index.js";
-import { validateBodyParams } from "../../validators/validators.js";
 import { TripModel } from "../../models/Trip.js";
 
 export const saveTrip = async (
@@ -13,7 +12,6 @@ export const saveTrip = async (
     req.body;
 
   try {
-    validateBodyParams(req.body);
     const trip = new TripModel({
       origin,
       destination,

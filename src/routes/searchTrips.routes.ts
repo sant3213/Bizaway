@@ -1,10 +1,10 @@
 import express from 'express';
-import { validateQuery } from '../middleware/validate.js';
 import { searchValidatorSchema } from '../validators/schemas.js';
 import { searchTrips } from '../controllers/searchTrips/searchTripsController.js';
+import { validate } from '../middleware/validate.js';
 
 const searchTripRoutes = express.Router();
 
-searchTripRoutes.get('/', validateQuery(searchValidatorSchema), searchTrips);
+searchTripRoutes.get('/', validate(searchValidatorSchema, 'query'), searchTrips);
 
 export default searchTripRoutes;

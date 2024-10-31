@@ -1,21 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
+import { ValidationError } from '../errors/ValidationError.js';
 
-export const validateBody = (schema: Joi.Schema) => (req: Request, res: Response, next: NextFunction): void => {
-  const { error } = schema.validate(req.body);
-  if (error) {
-    res.status(400).json({ error: error.details[0].message });
-    return;
-  } else {
-    next();
-  }
-};
+type ValidationTarget = 'body' | 'query' | 'params';
 
-export const validateQuery = (schema: Joi.Schema) => (req: Request, res: Response, next: NextFunction): void => {
-  const { error } = schema.validate(req.query);
+export const validate = (schema: Joi.Schema, target: ValidationTarget = 'body') => (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const { error } = schema.validate(req[target]);
+
   if (error) {
-     res.status(400).json({ error: error.details[0].message });
-     return;
+    next(new ValidationError(error.details[0].message));
   } else {
     next();
   }

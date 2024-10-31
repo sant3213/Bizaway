@@ -53,6 +53,15 @@ export const swaggerConfig: Options = {
             },
           },
         },
+        ErrorResponse: {
+          type: 'object',
+          properties: {
+            error: {
+              type: 'string',
+              example: 'Invalid parameters (e.g., incorrect page or limit value)',
+            },
+          },
+        },
       },
     },
     paths: {

@@ -26,11 +26,36 @@ export const searchValidatorSchema = Joi.object({
 });
 
 export const saveValidatorSchema = Joi.object({
-  origin: Joi.string().required(),
-  destination: Joi.string().required(),
-  cost: Joi.number().required(),
-  duration: Joi.number().required(),
-  type: Joi.string().required(),
-  id: Joi.string().required(),
-  display_name: Joi.string().required(),
+  origin: Joi.string().required().messages({
+    "any.required": ERROR_MESSAGES.MISSING_BODY_PARAMETER("origin"),
+  }),
+  destination: Joi.string().required().messages({
+    "any.required": ERROR_MESSAGES.MISSING_BODY_PARAMETER("destination"),
+  }),
+  cost: Joi.number().required().messages({
+    "any.required": ERROR_MESSAGES.MISSING_BODY_PARAMETER("cost"),
+  }),
+  duration: Joi.number().required().messages({
+    "any.required": ERROR_MESSAGES.MISSING_BODY_PARAMETER("duration"),
+  }),
+  type: Joi.string().required().messages({
+    "any.required": ERROR_MESSAGES.MISSING_BODY_PARAMETER("type"),
+  }),
+  id: Joi.string().required().messages({
+    "any.required": ERROR_MESSAGES.MISSING_BODY_PARAMETER("id"),
+  }),
+  display_name: Joi.string().required().messages({
+    "any.required": ERROR_MESSAGES.MISSING_BODY_PARAMETER("display_name"),
+  }),
+});
+
+export const paginationSchema = Joi.object({
+  page: Joi.number().integer().min(1).optional().messages({
+    "number.base": ERROR_MESSAGES.INVALID_PAGE,
+    "number.min": ERROR_MESSAGES.INVALID_PAGE,
+  }),
+  limit: Joi.number().integer().min(1).optional().messages({
+    "number.base": ERROR_MESSAGES.INVALID_LIMIT,
+    "number.min": ERROR_MESSAGES.INVALID_LIMIT,
+  }),
 });

@@ -1,7 +1,7 @@
 import { VALID_AIRPORT_CODES } from "../utils/airportCodes.js";
 
 export const getTripDocs = {
-    '/search-trips': {
+    '/api/v1/search-trips': {
         get: {
             summary: 'Search for trips based on origin, destination, and sorting options',
             parameters: [

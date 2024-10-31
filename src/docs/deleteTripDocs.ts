@@ -1,7 +1,7 @@
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../utils/constants.js";
 
 export const deleteTripDocs = {
-    '/trips/{id}': {
+    '/api/v1/trips/{id}': {
       delete: {
         summary: 'Delete a trip by ID',
         parameters: [

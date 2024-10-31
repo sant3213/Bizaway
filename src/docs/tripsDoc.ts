@@ -1,7 +1,7 @@
 import { ERROR_MESSAGES } from "../utils/constants.js";
 
 export const listTripsDocs = {
-  "/trips": {
+  "/api/v1/trips": {
       "get": {
         "summary": "Retrieve all saved trips",
         "parameters": [
@@ -89,9 +89,32 @@ export const listTripsDocs = {
               }
             }
           },
-          "500": {
-            "description": ERROR_MESSAGES.INTERNAL_SERVER_ERROR
+          "400": {
+            "description": "Invalid pagination parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": ERROR_MESSAGES.INVALID_PAGE
+                }
+              }
+            }
+          },
+         "500": {
+          "description": ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErrorResponse"
+              },
+              "example": {
+                "error": ERROR_MESSAGES.INTERNAL_SERVER_ERROR
+              }
+            }
           }
+        }
         }
       },
     post: {

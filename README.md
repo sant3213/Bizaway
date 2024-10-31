@@ -99,14 +99,14 @@ The API documentation is available via Swagger at [http://localhost:3000/api-doc
 3. Example endpoints include:
 ### Trip Endpoints
 
-- `GET /trips`
+- `GET /api/v1/trips`
   - **Description**: Retrieve all saved trips.
   - **Query Parameters**:
     - `page` (optional): Page number for pagination (e.g., `1`).
     - `limit` (optional): Number of trips per page (e.g., `10`).
   - **Response**: A paginated list of trips.
 
-- `POST /trips`
+- `POST /api/v1/trips`
   - **Description**: Save a new trip.
   - **Request Body**:
     - `origin` (string): Origin city (e.g., "NYC").
@@ -118,7 +118,7 @@ The API documentation is available via Swagger at [http://localhost:3000/api-doc
     - `display_name` (string): Route and transportation mode description (e.g., "from SYD to GRU by train").
   - **Response**: Confirms trip was saved successfully or returns validation errors.
 
-- `DELETE /trips/{id}`
+- `DELETE /api/v1/trips/{id}`
   - **Description**: Delete a trip by its unique ID.
   - **Path Parameter**:
     - `id` (string): The ID of the trip to delete.
@@ -126,7 +126,7 @@ The API documentation is available via Swagger at [http://localhost:3000/api-doc
 
 ### Search Endpoints
 
-- `GET /search-trips`
+- `GET /api/v1/search-trips`
   - **Description**: Search for trips based on origin, destination, and optional sorting.
   - **Query Parameters**:
     - `origin` (string, required): Origin city.
