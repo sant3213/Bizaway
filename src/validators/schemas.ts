@@ -1,6 +1,13 @@
-import Joi from "joi";
+import Joi, { CustomHelpers } from "joi";
 import { ERROR_MESSAGES, FILTERS } from "../utils/constants.js";
 import { VALID_AIRPORT_CODES } from "../utils/airportCodes.js";
+
+interface SearchParams {
+  origin: string;
+  destination: string;
+  sort_by?: string;
+}
+
 
 export const searchValidatorSchema = Joi.object({
   origin: Joi.string()
@@ -23,6 +30,14 @@ export const searchValidatorSchema = Joi.object({
     .messages({
       "any.only": ERROR_MESSAGES.INVALID_SORT_BY,
     }),
+}).custom((value: SearchParams, helpers: CustomHelpers) => {
+  if (value.origin === value.destination) {
+    return helpers.error("any.invalid", { message: ERROR_MESSAGES.SAME_ORIGIN_DESTINATION });
+  }
+  return value;
+})
+.messages({
+  "any.invalid": ERROR_MESSAGES.SAME_ORIGIN_DESTINATION,
 });
 
 export const saveValidatorSchema = Joi.object({
