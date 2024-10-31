@@ -40,7 +40,7 @@ This project is an API to manage and query trip information. It is built with No
   MONGODB_URI_TEST=mongodb://root:password@mongo:27017/trip_test?authSource=admin
   MONGODB_URI_PROD=mongodb://root:password@mongo:27017/trip_prod?authSource=admin
   PORT=3000
-  REDIS_URL=redis://localhost:6379
+  REDIS_URL=redis://redis:6379
   ```
 
 ## Installation
@@ -54,11 +54,16 @@ Make sure Docker is running.
 
 Add the .env file as described above.
 
-#### Running the Application
-- To build and start the application with Docker, run the following make command in the root directory of the project:
+#### Running the Application in development mode
+- To build and start the application with Docker, run the following docker command in the root directory of the project:
 
   ```bash
-  make up-dev
+  docker-compose --profile dev up --build
+  ```
+#### Running in Production Mode
+- To run the application in production mode, use:
+  ```bash
+  docker-compose --profile prod up --build
   ```
 
 This will start the application, and it will be accessible at [http://localhost:3000](http://localhost:3000).
@@ -67,11 +72,7 @@ This will start the application, and it will be accessible at [http://localhost:
 - API: Use Postman or any HTTP client to send requests to [http://localhost:3000](http://localhost:3000).
 - Swagger Documentation: Open [http://localhost:3000/api-docs](http://localhost:3000/api-docs) in your browser to view the Swagger API documentation.
 
-#### Running in Production Mode
-- To run the application in production mode, use:
-  ```bash
-  make up-prod
-  ```
+
 ## Middleware
 - **Security Headers with Helmet:** The API uses helmet to set secure HTTP headers, which helps protect against common web vulnerabilities. This setup includes protections like X-Frame-Options to prevent clickjacking, Strict-Transport-Security for HTTPS enforcement, and X-XSS-Protection to mitigate cross-site scripting (XSS) attacks.
   
@@ -84,7 +85,7 @@ This will start the application, and it will be accessible at [http://localhost:
 - To run tests with Docker, use:
 
     ```bash
-    make test
+    docker-compose -f docker-compose.yml -f docker-compose.test.yml --profile test up --build test
     ```
 
 Alternatively, you can run tests locally without Docker:
