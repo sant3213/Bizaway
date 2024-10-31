@@ -9,14 +9,16 @@ This project is an API to manage and query trip information. It is built with No
   - [Prerequisites](#prerequisites)
   - [Environment Variables](#environment-variables)
   - [Installation](#installation)
-      - [**Running the Application**](#running-the-application)
+      - [Running the Application](#running-the-application)
   - [Accessing the Application](#accessing-the-application)
-      - [**Running in Production Mode**](#running-in-production-mode)
+      - [Running in Production Mode](#running-in-production-mode)
+  - [Middleware](#middleware)
   - [Testing](#testing)
   - [API Documentation](#api-documentation)
   - [Usage](#usage)
     - [Trip Endpoints](#trip-endpoints)
     - [Search Endpoints](#search-endpoints)
+    - [Caching](#caching)
   - [Project Structure](#project-structure)
   - [Troubleshooting](#troubleshooting)
   - [Compromises or Assumptions](#compromises-or-assumptions)
@@ -25,16 +27,20 @@ This project is an API to manage and query trip information. It is built with No
 
 - [Docker](https://docs.docker.com/get-docker/) must be installed on your machine to run the application in containers.
 - A valid API key and URL to query trips.
+- [Redis](https://redis.io/) is used for caching API responses. It is configured via Docker and requires the `REDIS_URL` environment variable.
 
 ## Environment Variables
 
 - Create a `.env` file in the root of the project with the following variables:
 
-  ```env
+  ```bash
   API_KEY=<YourAPIKEY>
   TRIPS_API_URL=<APIToQueryTrips>
-  MONGODB_URI=mongodb://root:password@mongo:27017/trip?authSource=admin
+  MONGODB_URI_DEV=mongodb://root:password@mongo:27017/trip_dev?authSource=admin
+  MONGODB_URI_TEST=mongodb://root:password@mongo:27017/trip_test?authSource=admin
+  MONGODB_URI_PROD=mongodb://root:password@mongo:27017/trip_prod?authSource=admin
   PORT=3000
+  REDIS_URL=redis://localhost:6379
   ```
 
 ## Installation
@@ -48,7 +54,7 @@ Make sure Docker is running.
 
 Add the .env file as described above.
 
-#### **Running the Application**
+#### Running the Application
 - To build and start the application with Docker, run the following make command in the root directory of the project:
 
   ```bash
@@ -61,11 +67,18 @@ This will start the application, and it will be accessible at [http://localhost:
 - API: Use Postman or any HTTP client to send requests to [http://localhost:3000](http://localhost:3000).
 - Swagger Documentation: Open [http://localhost:3000/api-docs](http://localhost:3000/api-docs) in your browser to view the Swagger API documentation.
 
-#### **Running in Production Mode**
+#### Running in Production Mode
 - To run the application in production mode, use:
   ```bash
   make up-prod
   ```
+## Middleware
+- **Security Headers with Helmet:** The API uses helmet to set secure HTTP headers, which helps protect against common web vulnerabilities. This setup includes protections like X-Frame-Options to prevent clickjacking, Strict-Transport-Security for HTTPS enforcement, and X-XSS-Protection to mitigate cross-site scripting (XSS) attacks.
+  
+- **Error Handling**: Errors are managed using custom error classes (e.g., `AppError`, `ValidationError`, `ExternalApiError`).
+  
+- **Validation**: `Joi` is used to validate request parameters and body content to ensure API integrity.
+
 
 ## Testing
 - To run tests with Docker, use:
@@ -97,6 +110,7 @@ The API documentation is available via Swagger at [http://localhost:3000/api-doc
 1. Start the application as described above.
 2. Use tools like Postman or Swagger to interact with the API.
 3. Example endpoints include:
+   
 ### Trip Endpoints
 
 - `GET /api/v1/trips`
@@ -133,7 +147,14 @@ The API documentation is available via Swagger at [http://localhost:3000/api-doc
     - `destination` (string, required): Destination city.
     - `sort_by` (string, optional): Sorting criteria (`fastest` or `cheapest`).
   - **Response**: A list of trips matching the search criteria.
+
+### Caching
+
+Responses for trip searches are cached in Redis for improved performance, reducing the need for repeated requests to external APIs.
+
 ## Project Structure
+
+The project follows a structured folder layout to separate configurations, routes, and core business logic
 
 ```bash
     src/
@@ -160,21 +181,24 @@ The API documentation is available via Swagger at [http://localhost:3000/api-doc
 
 ## Troubleshooting
 - **Docker Issues:** Ensure Docker is installed and running, and check that the `.env`file contains all required variables.
+  
 - **Port Conflicts:** If port 3000 is already in use, change the PORT value in the .env file and rebuild the containers with docker-compose up --build.
+  
 - **Database Connection Errors:** Ensure that the `MONGODB_URI` in the `.env` file matches the expected format for the MongoDB container (e.g., `mongodb://root:password@mongo:27017/trip?authSource=admin`). Docker should handle network connections between services automatically, but if you encounter issues, verify that the MongoDB service is running and accessible within the Docker network.
-- **Logging Information:** Logs are available at logs/error.log for error-level logs. Console logs provide additional information for successful operations.
+  
+- **Logging Information:** Logs are available at `logs/error.log` for error-level logs. Console logs provide additional information for successful operations.
 
 
 ## Compromises or Assumptions 
 
-1. **API Rate Limits and Error Handling:** This API relies on a third-party API to retrieve trip data. Since details about rate limits or potential downtime weren’t provided, the solution assumes the external API will be reliably available. However, the implementation includes error handling via the ExternalApiError class to manage cases where the external API may be down or unresponsive.
+1. **API Rate Limits and Error Handling:** This API relies on a third-party API to retrieve trip data. Since details about rate limits or potential downtime weren’t provided, the solution assumes the external API will be reliably available. However, the implementation includes error handling via the `ExternalApiError` class to manage cases where the external API may be down or unresponsive.
 
-2. **Validation of Query and Body Parameters:** Parameter validation is handled using Joi in the middleware to ensure the required parameters (origin, destination, and sort_by) are correctly formatted. The assumption here is that invalid or missing parameters should immediately return a 400 status without making a request to the third-party API.
+2. **Validation of Query and Body Parameters:** Parameter validation is handled using Joi in the middleware to ensure the required parameters (`origin`, `destination`, and `sort_by`) are correctly formatted. The assumption here is that invalid or missing parameters should immediately return a 400 status without making a request to the third-party API.
 
 3. **Sorting Assumptions:** Sorting functionality is limited to fastest and cheapest options as specified. Trips are sorted on the client side after receiving them from the third-party API, assuming that the returned dataset is manageable in memory. For listing saved trips, pagination is implemented to allow more efficient data handling within the API.
 
-4. **MongoDB Storage:** MongoDB is used to persist trip data for features like saving, listing, and deleting trips. While this provides a basic persistence layer, no additional indexing or optimization for performance is assumed due to the anticipated low volume of stored data.
+4. **MongoDB Storage:** `MongoDB` is used to persist trip data for features like saving, listing, and deleting trips. While this provides a basic persistence layer, no additional indexing or optimization for performance is assumed due to the anticipated low volume of stored data.
 
-5. **Testing and Mocking:** Jest is used to mock services, including the third-party API. This approach provides flexibility in testing without relying on the external API’s availability. 
+5. **Testing and Mocking:** `Jest` is used to mock services, including the third-party API. This approach provides flexibility in testing without relying on the external API’s availability. 
 
-6. **Environment Variable Security:** Sensitive data such as API keys and database URIs are handled through environment variables. The .env file should be secured appropriately and never included in version control to protect these values.
+6. **Environment Variable Security:** Sensitive data such as API keys and database URIs are handled through environment variables. The `.env` file should be secured appropriately and never included in version control to protect these values.

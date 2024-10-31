@@ -4,9 +4,11 @@ import { connectToDatabase } from "./config/database.js";
 import { setupSwagger } from "./utils/swaggerSetup.js";
 import { config } from "./config/config.js";
 import routes from "./routes/index.js";
-import redisClient from "./config/redisClient.js";
+import helmet from "helmet";
 
 const app = express();
+
+app.use(helmet());
 
 if (process.env.NODE_ENV === "production") {
   console.log("Running in production mode");
