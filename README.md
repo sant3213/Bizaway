@@ -172,28 +172,62 @@ Responses for trip searches are cached in Redis for improved performance, reduci
 
 The project follows a structured folder layout to separate configurations, routes, and core business logic
 
-```bash
-    src/
-    ├── app.ts                  # Main application file, initializes routes and middleware
-    ├── config/                 # Configuration files for database, environment, and Swagger
-    │   ├── config.ts
-    │   ├── database.ts
-    │   ├── jest.config.ts
-    │   └── swaggerConfig.ts
-    ├── controllers/            # Controller files handling API requests
-    ├── docs/                   # Swagger documentation files
-    ├── errors/                 # Custom error classes (e.g., AppError)
-    ├── middleware/             # Middleware for validation and error handling
-    │   ├── errorHandler.ts
-    │   └── validate.ts
-    ├── models/                 # MongoDB models for data persistence
-    ├── routes/                 # Route files for trip and search-trip endpoints
-    ├── services/               # Business logic and third-party API interactions
-    ├── types/ 
-    ├── utils/                  # Utility files (constants, logging setup)
-    └── validators/     
+  ```bash
+  src/
+  ├── config/                 # Configuration files for database, environment, Swagger, and Redis
+  │   ├── config.ts
+  │   ├── database.ts
+  │   ├── jest.config.ts
+  │   ├── redisClient.ts
+  │   └── swaggerConfig.ts
+  ├── controllers/            # Controllers for handling API requests
+  │   ├── searchTrips/
+  │   │   ├── searchTripsController.test.ts
+  │   │   └── searchTripsController.ts
+  │   └── trips/
+  │       ├── deleteTripController.test.ts
+  │       ├── deleteTripController.ts
+  │       ├── listTripController.test.ts
+  │       ├── listTripsController.ts
+  │       ├── saveTripController.test.ts
+  │       └── saveTripController.ts
+  ├── docs/                   # Swagger documentation files
+  │   ├── deleteTripDocs.ts
+  │   ├── getTripDocs.ts
+  │   ├── tripDocs.ts
+  │   └── tripsDoc.ts
+  ├── errors/                 # Custom error classes
+  │   ├── AppError.ts
+  │   ├── ExternalApiError.ts
+  │   ├── handleError.ts
+  │   ├── index.ts
+  │   ├── NotFoundError.ts
+  │   └── ValidationError.ts
+  ├── middleware/             # Middleware for caching, validation, and error handling
+  │   ├── cacheMiddleware.ts
+  │   ├── errorHandler.ts
+  │   └── validate.ts
+  ├── models/                 # MongoDB models for data persistence
+  │   └── Trip.ts
+  ├── routes/                 # Route files for API endpoints
+  │   ├── index.ts
+  │   ├── searchTrips.routes.ts
+  │   └── trips.routes.ts
+  ├── services/               # Business logic and third-party API interactions
+  │   ├── tripsService.test.ts
+  │   └── tripsService.ts
+  ├── types/                  # Type definitions
+  │   └── trip.ts
+  ├── utils/                  # Utility functions and constants
+  │   ├── airportCodes.ts
+  │   ├── constants.ts
+  │   ├── logger.ts
+  │   └── swaggerSetup.ts
+  ├── validators/             # Validation schemas
+  │   └── schemas.ts
+  └── app.ts                  # Main application file, initializes routes and middleware
 
-```
+  ```
 
 ## Troubleshooting
 - **Docker Issues:** Ensure Docker is installed and running, and check that the `.env`file contains all required variables.
