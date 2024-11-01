@@ -9,7 +9,7 @@ This project is an API to manage and query trip information. It is built with No
   - [Prerequisites](#prerequisites)
   - [Environment Variables](#environment-variables)
   - [Installation](#installation)
-      - [Running the Application](#running-the-application)
+      - [Running the Application in development mode](#running-the-application-in-development-mode)
   - [Accessing the Application](#accessing-the-application)
       - [Running in Production Mode](#running-in-production-mode)
   - [Middleware](#middleware)
