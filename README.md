@@ -18,6 +18,7 @@ This project is an API to manage and query trip information. It is built with No
   - [Usage](#usage)
     - [Trip Endpoints](#trip-endpoints)
     - [Search Endpoints](#search-endpoints)
+    - [Valid Airport Codes](#valid-airport-codes)
     - [Caching](#caching)
   - [Project Structure](#project-structure)
   - [Troubleshooting](#troubleshooting)
@@ -149,6 +150,20 @@ The API documentation is available via Swagger at [http://localhost:3000/api-doc
     - `sort_by` (string, optional): Sorting criteria (`fastest` or `cheapest`).
   - **Response**: A list of trips matching the search criteria.
 
+### Valid Airport Codes
+
+The API includes validation for origin and destination parameters based on a predefined set of airport codes. The following codes are supported:
+
+```ts
+export const VALID_AIRPORT_CODES = [
+  "ATL", "PEK", "LAX", "DXB", "HND", "ORD", "LHR", "PVG", "CDG", "DFW",
+  "AMS", "FRA", "IST", "CAN", "JFK", "SIN", "DEN", "ICN", "BKK", "SFO",
+  "LAS", "CLT", "MIA", "KUL", "SEA", "MUC", "EWR", "MAD", "HKG", "MCO",
+  "PHX", "IAH", "SYD", "MEL", "GRU", "YYZ", "LGW", "BCN", "MAN", "BOM",
+  "DEL", "ZRH", "SVO", "DME", "JNB", "ARN", "OSL", "CPH", "HEL", "VIE"
+];
+
+```
 ### Caching
 
 Responses for trip searches are cached in Redis for improved performance, reducing the need for repeated requests to external APIs.

@@ -129,7 +129,7 @@ export const listTripsDocs = {
                 origin: {
                   type: "string",
                   description: "Origin city",
-                  example: "NYC",
+                  example: "ZRH",
                 },
                 destination: {
                   type: "string",
