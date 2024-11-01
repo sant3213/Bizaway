@@ -245,9 +245,9 @@ The project follows a structured folder layout to separate configurations, route
 
 2. **Validation of Query and Body Parameters:** Parameter validation is handled using Joi in the middleware to ensure the required parameters (`origin`, `destination`, and `sort_by`) are correctly formatted. The assumption here is that invalid or missing parameters should immediately return a 400 status without making a request to the third-party API.
 
-3. **Sorting Assumptions:** Sorting functionality is limited to fastest and cheapest options as specified. Trips are sorted on the client side after receiving them from the third-party API, assuming that the returned dataset is manageable in memory. For listing saved trips, pagination is implemented to allow more efficient data handling within the API.
+3. **Sorting Assumptions:** The sorting is handled in a backend service acting as a client of the third-party API. In this case, the backend service retrieves the trips from the external API, sorts them in memory, and then sends the sorted results to the frontend.
 
-4. **MongoDB Storage:** `MongoDB` is used to persist trip data for features like saving, listing, and deleting trips. While this provides a basic persistence layer, no additional indexing or optimization for performance is assumed due to the anticipated low volume of stored data.
+4. **MongoDB Storage:**  `MongoDB` is used to persist trip data, supporting features like saving, listing, and deleting trips. To optimize query performance, compound indexes have been added. Specifically, an index on { origin: 1, destination: 1, cost: 1 } improves retrieval efficiency for "cheapest" trip queries, and another on { origin: 1, destination: 1, duration: 1 } optimizes "fastest" trip queries. These additions enhance data retrieval speed while maintaining a lightweight persistence layer suitable for the anticipated data volume.
 
 5. **Testing and Mocking:** `Jest` is used to mock services, including the third-party API. This approach provides flexibility in testing without relying on the external API’s availability. 
 
