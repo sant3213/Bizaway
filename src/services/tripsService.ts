@@ -76,22 +76,6 @@ export const sortTrips = (trips: Trip[], sortBy: string): Trip[] => {
 };
 
 /**
- * Filters an array of trips based on origin and destination.
- * 
- * @param trips - Array of Trip objects to filter.
- * @param origin - The origin code to match (case insensitive).
- * @param destination - The destination code to match (case insensitive).
- * @returns Array of trips that match the specified origin and destination.
- */
-export const filterTrips = (trips: Trip[], origin: string, destination: string): Trip[] => {
-  return trips.filter(
-    (trip) =>
-      trip.origin.toUpperCase() === origin.toUpperCase() &&
-      trip.destination.toUpperCase() === destination.toUpperCase()
-  );
-};
-
-/**
  * Lists trips from the database with pagination.
  * Returns trip data and pagination metadata.
  */
